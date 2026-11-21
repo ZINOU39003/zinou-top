@@ -1,0 +1,4 @@
+# ZINOU TOP: on upstream merges keep the ZINOU version of these files when both sides changed them.
+# Enabled by scripts/upstream/sync-upstream.sh (git config merge.ours.driver true).
+README.md merge=ours
+.github/ISSUE_TEMPLATE/*.yml merge=ours
