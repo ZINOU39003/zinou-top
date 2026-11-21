@@ -1,3 +1,8 @@
+> **ZINOU TOP — signing key warning**
+> Updates for `com.zinou.top` require the same package ID **and** the same release signing key.
+> If the ZINOU TOP release keystore or its password is lost, updates can no longer be published normally.
+> Never commit the keystore or `keystore.properties`. See [SIGNING.md](SIGNING.md).
+
 [<img src="images/badge_fdroid.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/app.smarttube.fdroid/)
 [<img src="images/badge_github.png" alt="Get it on GitHub" height="80">](https://github.com/yuliskov/SmartTube/releases)
 

@@ -30,6 +30,9 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+// ZINOU TOP: release signing guard (no secrets inside). See SIGNING.md
+apply from: 'zinou-signing.gradle'
+
 // The first letter of the flavor name must be in uppercase
 if (new File("${projectDir}/google-services.json").exists() && (getGradle().getStartParameter().getTaskRequests().toString().contains("Stbeta") ||
         getGradle().getStartParameter().getTaskRequests().toString().contains("Ststable"))) {
@@ -117,6 +120,12 @@ android {
                 signingConfig signingConfigs.release
             }
         }
+    }
+
+    // ZINOU TOP: zinou debug builds always use the standard Android debug key.
+    // The private release key is used only for zinou release builds (see zinou-signing.gradle).
+    if (project.findProperty('zinouBuildRequested')) {
+        buildTypes.debug.signingConfig = signingConfigs.debug
     }
 
     // naming example: SmartYouTubeTV_Xwalk_v6.8.12_r.apk
