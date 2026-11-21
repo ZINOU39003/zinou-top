@@ -65,6 +65,14 @@ Record the certificate fingerprint (keep it with your backups):
 keytool -list -v -keystore "$env:USERPROFILE\ZinouTopKeys\zinou-top-release.jks" -alias zinou-top
 ```
 
+Copy the `SHA256:` certificate fingerprint into `zinou.properties`:
+
+```properties
+release.cert.sha256=AB:CD:...   # 64 hex characters, colons allowed - public data, safe to commit
+```
+
+The release tooling refuses to publish APKs signed with any other certificate.
+
 ## 2. Configure the build
 
 Copy `keystore.properties.example` to `keystore.properties` (repository root) and fill it:
@@ -103,10 +111,28 @@ Check that:
 
 Check the package ID: `aapt dump badging <apk>` → `package: name='com.zinou.top'`.
 
-## 5. CI signing (later, optional)
+## 5. CI signing (optional)
 
-Not configured yet. When needed, the standard approach is GitHub **Actions Secrets**:
-the keystore is base64-encoded and stored as an encrypted repository secret together with the password and alias;
-the workflow decodes it to a temporary file outside the repository only for the release job and writes
-`keystore.properties` at run time. Secrets are never printed in logs and are not available to workflows
-started from forks. The key must still be backed up offline: GitHub Secrets cannot be read back.
+The workflow `.github/workflows/zinou-release.yml` is ready but signs **only** if these repository secrets exist
+(Settings → Secrets and variables → Actions → New repository secret). Without them it stops with an explanation,
+and you release locally instead (RELEASING.md).
+
+| Secret | Value |
+|---|---|
+| `ZINOU_KEYSTORE_BASE64` | base64 of the `.jks` file |
+| `ZINOU_KEYSTORE_PASSWORD` | the keystore password (PKCS12: also the key password) |
+| `ZINOU_KEY_ALIAS` | `zinou-top` |
+
+Create the base64 text on Windows without writing it to the repository:
+
+```powershell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("$env:USERPROFILE\ZinouTopKeys\zinou-top-release.jks")) | Set-Clipboard
+```
+
+Paste it into the secret, then clear the clipboard. During a release the job decodes the key to a temporary file
+outside the repository, writes `keystore.properties` at run time and deletes both at the end. Secrets are masked in
+logs and not available to pull requests from forks. Use a GitHub *environment* named `release` with required
+reviewers if more people get write access. GitHub secrets cannot be read back — keep your offline backups.
+
+Trade-off: storing the key in GitHub is convenient, but anyone with admin access to the repository could misuse it.
+Signing locally keeps the key only on your machine.
