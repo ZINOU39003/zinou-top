@@ -1,0 +1,127 @@
+name: ZINOU TOP Release
+
+# Builds a SIGNED release and creates a DRAFT GitHub Release with:
+#   ZinouTop-v<ver>.apk (+ per-ABI APKs), update.json, SHA256SUMS.txt
+# Nothing reaches users until a maintainer reviews the draft and clicks "Publish".
+#
+# Requires repository secrets (Settings > Secrets and variables > Actions). Not created automatically:
+#   ZINOU_KEYSTORE_BASE64    base64 of the release keystore (.jks)
+#   ZINOU_KEYSTORE_PASSWORD  keystore password (PKCS12: same as key password)
+#   ZINOU_KEY_ALIAS          zinou-top
+# Without them this workflow stops with an explanation. The keystore is NEVER stored in the repository.
+# See SIGNING.md ("CI signing") and RELEASING.md.
+
+on:
+  push:
+    tags: [ "v*.*.*" ]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to release, e.g. v1.0.0"
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: zinou-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    environment: release
+    env:
+      TAG: ${{ github.event.inputs.tag || github.ref_name }}
+
+    steps:
+      - name: Check signing secrets are configured
+        env:
+          KS: ${{ secrets.ZINOU_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ZINOU_KEYSTORE_PASSWORD }}
+          KS_ALIAS: ${{ secrets.ZINOU_KEY_ALIAS }}
+        run: |
+          if [ -z "$KS" ] || [ -z "$KS_PASS" ] || [ -z "$KS_ALIAS" ]; then
+            echo "::error::Release signing secrets are not configured (ZINOU_KEYSTORE_BASE64, ZINOU_KEYSTORE_PASSWORD, ZINOU_KEY_ALIAS). Build and sign locally instead (RELEASING.md) or add the secrets (SIGNING.md)."
+            exit 1
+          fi
+
+      - name: Checkout tag (with SmartTube submodules)
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          ref: ${{ env.TAG }}
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Check configuration matches this repository and tag
+        run: |
+          set -eu
+          owner=$(grep -E '^github\.owner=' zinou.properties | cut -d= -f2- | tr -d '[:space:]')
+          repo=$(grep -E '^github\.repository=' zinou.properties | cut -d= -f2- | tr -d '[:space:]')
+          if [ "$owner/$repo" != "$GITHUB_REPOSITORY" ]; then
+            echo "::error::zinou.properties points to '$owner/$repo' but this repository is '$GITHUB_REPOSITORY'."
+            exit 1
+          fi
+          case "$TAG" in v[0-9]*.[0-9]*.[0-9]*) ;; *) echo "::error::Tag must look like v1.2.3"; exit 1;; esac
+
+      - name: Write signing config (temporary, outside the repository)
+        env:
+          KS: ${{ secrets.ZINOU_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ZINOU_KEYSTORE_PASSWORD }}
+          KS_ALIAS: ${{ secrets.ZINOU_KEY_ALIAS }}
+        run: |
+          set -eu
+          umask 077
+          printf '%s' "$KS" | base64 --decode > "$RUNNER_TEMP/zinou-release.jks"
+          {
+            echo "storeFile=$RUNNER_TEMP/zinou-release.jks"
+            echo "storePassword=$KS_PASS"
+            echo "keyAlias=$KS_ALIAS"
+            echo "keyPassword=$KS_PASS"
+          } > keystore.properties
+
+      - name: Build signed release APKs
+        run: |
+          chmod +x gradlew
+          ./gradlew clean :common:testZinouReleaseUnitTest --tests 'com.liskovsoft.smartyoutubetv2.common.zinou.*' assembleZinouRelease
+
+      - name: Remove signing material
+        if: always()
+        run: rm -f keystore.properties "$RUNNER_TEMP/zinou-release.jks"
+
+      - name: Previous update.json (keeps changelog history)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p prev
+          gh release download --repo "$GITHUB_REPOSITORY" --pattern update.json --dir prev || echo "No previous release."
+
+      - name: Create release assets (verifies package, version and signing certificate)
+        run: |
+          set -eu
+          BT=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          PREV=()
+          if [ -f prev/update.json ]; then PREV=(--previous-update-json prev/update.json); fi
+          python3 scripts/release/make_release_assets.py \
+            --apk-dir smarttubetv/build/outputs/apk/zinou/release \
+            --out dist --tag "$TAG" \
+            --aapt "$BT/aapt" --apksigner "$BT/apksigner" "${PREV[@]}"
+          (cd dist && sha256sum -c SHA256SUMS.txt)
+
+      - name: Create DRAFT GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --draft \
+            --title "ZINOU TOP ${TAG#v}" --notes-file dist/release-notes.md \
+            dist/*.apk dist/update.json dist/SHA256SUMS.txt
+          echo "Draft created. Review it on GitHub, then Publish to make the update visible to users."
