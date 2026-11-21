@@ -2,11 +2,15 @@
 
 Base: SmartTube `41fbc7c` · ZINOU TOP `1.0.0 (10000)` · package `com.zinou.top`
 
-## Environment limits of the automated run
+## Gradle build on GitHub Actions
 
-The preparation environment had no access to Google Maven, Maven Central or services.gradle.org, so **Gradle could
-not run** (no APK was built there). Everything else was verified with real tools. Gradle builds run in the
-**ZINOU TOP Build** workflow on GitHub and on the maintainer's computer.
+| Run | Result |
+|---|---|
+| [ZINOU TOP Build #1](https://github.com/ZINOU39003/zinou-top/actions/runs/44896212668) | ✅ unit tests in Gradle (`:common:testZinouDebugUnitTest`) + `assembleZinouDebug` — 4 debug APKs (universal, armeabi-v7a, arm64-v8a, x86) |
+| [ZINOU TOP Build #2](https://github.com/ZINOU39003/zinou-top/actions/runs/44896631065) | ✅ same + APK identity check: package `com.zinou.top`, label `ZINOU TOP`, no `smarttube` provider authority |
+
+The local preparation environment had no access to Google Maven / Maven Central, so Gradle runs only on GitHub
+Actions and on the maintainer's computer. Release (signed) builds need the private key (SIGNING.md).
 
 ## Automated results
 
