@@ -35,7 +35,7 @@ git push origin main v1.0.1
 
 ### 3a. Build and publish with GitHub Actions (if signing secrets are configured)
 
-Pushing the tag runs **ZINOU TOP Release**: signed build → package/version/certificate checks → **draft** release with
+Pushing the tag (or Actions → ZINOU TOP Release → **Run workflow** with the tag, which creates it from `main`) runs **ZINOU TOP Release**: signed build → package/version/certificate checks → **draft** release with
 all assets. Open the draft, check the notes and assets, then click **Publish release**.
 
 ### 3b. Build and publish locally (no secrets on GitHub) — Windows PowerShell
