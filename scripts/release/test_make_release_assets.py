@@ -147,6 +147,17 @@ class ReleaseAssetsTest(unittest.TestCase):
             with self.assertRaises(m.ReleaseError):
                 m.validate_update_json(bad)
 
+    def test_single_cert_parsing(self):
+        a, b = "4d" * 32, "ab" * 32
+        old_fmt = "Verifies\nSigner #1 certificate DN: CN=ZINOU TOP\nSigner #1 certificate SHA-256 digest: %s\n" % a
+        new_fmt = old_fmt + "Signer (minSdkVersion=24, maxSdkVersion=2147483647) certificate SHA-256 digest: %s\n" % a.upper()
+        self.assertEqual(a, m.single_cert_sha256(old_fmt))
+        self.assertEqual(a, m.single_cert_sha256(new_fmt))
+        with self.assertRaises(m.ReleaseError):
+            m.single_cert_sha256(old_fmt + "Signer #2 certificate SHA-256 digest: %s\n" % b)
+        with self.assertRaises(m.ReleaseError):
+            m.single_cert_sha256("Verifies\n")
+
     def test_reads_real_build_gradle(self):
         repo = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         gradle = os.path.join(repo, "smarttubetv", "build.gradle")

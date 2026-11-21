@@ -110,10 +110,16 @@ def apk_cert_sha256(apksigner, apk):
     res = subprocess.run([apksigner, "verify", "--print-certs", apk], capture_output=True, text=True)
     if res.returncode != 0:
         raise ReleaseError("apksigner verify failed for %s:\n%s" % (apk, res.stdout + res.stderr))
-    certs = re.findall(r"Signer #\d+ certificate SHA-256 digest:\s*([0-9a-fA-F]+)", res.stdout)
+    return single_cert_sha256(res.stdout, apk)
+
+
+def single_cert_sha256(apksigner_output, apk="APK"):
+    """All certificate SHA-256 digests printed by `apksigner verify --print-certs` must be one and the same.
+    Newer apksigner versions print the signer once per scheme/section (e.g. 'Signer #1', 'Signer (minSdkVersion=..)')."""
+    certs = {c.lower() for c in re.findall(r"certificate SHA-256 digest:\s*([0-9a-fA-F]{64})", apksigner_output)}
     if len(certs) != 1:
-        raise ReleaseError("expected exactly one signer in " + apk)
-    return certs[0].lower()
+        raise ReleaseError("expected exactly one signing certificate in %s, found %d" % (apk, len(certs)))
+    return certs.pop()
 
 
 def normalize_fingerprint(value):

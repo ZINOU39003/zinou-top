@@ -54,12 +54,17 @@ jobs:
         run: |
           set -eu
           case "$TAG" in v[0-9]*.[0-9]*.[0-9]*) ;; *) echo "::error::Tag must look like v1.2.3"; exit 1;; esac
-          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" >/dev/null 2>&1; then
-            echo "Tag $TAG already exists - releasing it as is."
-          else
-            SHA=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)
+          SHA=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)
+          if ! gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" >/dev/null 2>&1; then
             gh api "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/tags/$TAG" -f sha="$SHA" >/dev/null
             echo "Created tag $TAG at main ($SHA)."
+          elif gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::A release for $TAG already exists. Use a new version number."
+            exit 1
+          else
+            # tag left over from a failed run (no release was created): move it to the current main
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/$TAG" -f sha="$SHA" -F force=true >/dev/null
+            echo "Moved unreleased tag $TAG to main ($SHA)."
           fi
 
       - name: Checkout tag (with SmartTube submodules)
