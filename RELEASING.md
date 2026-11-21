@@ -1,7 +1,7 @@
 # Releasing ZINOU TOP
 
 A release = signed APKs + `update.json` + `SHA256SUMS.txt` attached to a **published** GitHub Release on
-`YOUR_USERNAME/zinou-top`. Installed apps read
+`ZINOU39003/zinou-top`. Installed apps read
 `https://github.com/<owner>/zinou-top/releases/latest/download/update.json`, so an update becomes visible to users
 only when the release is **published** (drafts and pre-releases are ignored).
 
@@ -46,7 +46,7 @@ git submodule update --init --recursive
 .\gradlew.bat clean assembleZinouRelease                       # needs keystore.properties (SIGNING.md)
 
 # previous update.json keeps the in-app changelog history (skip for v1.0.0)
-gh release download --repo YOUR_USERNAME/zinou-top --pattern update.json --dir prev
+gh release download --repo ZINOU39003/zinou-top --pattern update.json --dir prev
 
 $bt = (Get-ChildItem "$env:LOCALAPPDATA\Android\Sdk\build-tools" | Sort-Object Name | Select-Object -Last 1).FullName
 python scripts\release\make_release_assets.py `
@@ -54,7 +54,7 @@ python scripts\release\make_release_assets.py `
   --aapt "$bt\aapt.exe" --apksigner "$bt\apksigner.bat" `
   --previous-update-json prev\update.json                      # omit this line for v1.0.0
 
-gh release create v1.0.1 --repo YOUR_USERNAME/zinou-top --draft `
+gh release create v1.0.1 --repo ZINOU39003/zinou-top --draft `
   --title "ZINOU TOP 1.0.1" --notes-file dist\release-notes.md `
   dist\ZinouTop-v1.0.1*.apk dist\update.json dist\SHA256SUMS.txt
 ```

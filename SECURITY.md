@@ -3,7 +3,7 @@
 ## Reporting a vulnerability
 
 Please do **not** open a public issue for security problems. Use GitHub's private
-**Security → Report a vulnerability** on `YOUR_USERNAME/zinou-top` (enable *Private vulnerability reporting* in the
+**Security → Report a vulnerability** on `ZINOU39003/zinou-top` (enable *Private vulnerability reporting* in the
 repository settings). Problems in SmartTube itself should also be reported upstream.
 
 ## Secrets policy

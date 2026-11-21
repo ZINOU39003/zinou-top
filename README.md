@@ -14,7 +14,7 @@ all of its features, with its own identity, package ID, signing key and GitHub-b
 | Package ID | `com.zinou.top` |
 | Version | 1.0.0 (`versionCode` 10000) |
 | Based on | SmartTube, upstream commit in [`zinou.properties`](zinou.properties) (`upstream.commit`) |
-| Distribution | GitHub Releases of `YOUR_USERNAME/zinou-top` — no server / VPS |
+| Distribution | GitHub Releases of `ZINOU39003/zinou-top` — no server / VPS |
 
 ## Features
 
@@ -49,7 +49,7 @@ SmartTube source code (packages `com.liskovsoft.*`) is intentionally **not renam
 Requirements: JDK 17, Android SDK (Android Studio), Git with submodules.
 
 ```bash
-git clone --recurse-submodules https://github.com/YOUR_USERNAME/zinou-top.git
+git clone --recurse-submodules https://github.com/ZINOU39003/zinou-top.git
 cd zinou-top
 ./gradlew assembleZinouDebug          # Windows: .\gradlew.bat assembleZinouDebug
 ```
@@ -69,7 +69,7 @@ The original SmartTube flavors (`stbeta`, `ststable`, `stfdroid`) are still pres
 2. In `zinou.properties` set `github.owner=<your username>` and commit.
 3. Push the branches:
    ```bash
-   git remote add origin https://github.com/<your username>/zinou-top.git
+   git remote add origin https://github.com/ZINOU39003/zinou-top.git
    git push -u origin upstream zinou main
    ```
 4. Set `zinou` as the default branch (Settings → General) and protect `main`.
