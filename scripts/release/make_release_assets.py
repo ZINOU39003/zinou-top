@@ -93,7 +93,8 @@ def parse_changelog(path, version):
             continue
         stripped = line.strip()
         if stripped.startswith(("- ", "* ")):
-            target.append(stripped[2:].strip())
+            # plain text for the TV dialog: drop markdown emphasis / code marks
+            target.append(re.sub(r"[`*]", "", stripped[2:]).strip())
     return en, ar
 
 
