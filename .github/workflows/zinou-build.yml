@@ -56,6 +56,34 @@ jobs:
       - name: Build ZINOU TOP debug APKs
         run: ./gradlew assembleZinouDebug
 
+      - name: Verify APK identity (package, name, providers)
+        run: |
+          set -eu
+          BT=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          APK=$(find smarttubetv/build/outputs/apk/zinou/debug -name 'ZinouTop-v*-debug.apk' ! -name '*-v7a*' ! -name '*-v8a*' ! -name '*-x86*' | head -n 1)
+          [ -n "$APK" ] || { echo "::error::universal debug APK not found"; exit 1; }
+          BADGING=$("$BT/aapt" dump badging "$APK")
+          XML=$("$BT/aapt" dump xmltree "$APK" AndroidManifest.xml)
+          PKG=$(printf '%s\n' "$BADGING" | sed -n "s/^package: name='\([^']*\)'.*/\1/p")
+          VER=$(printf '%s\n' "$BADGING" | sed -n "s/.*versionName='\([^']*\)'.*/\1/p")
+          LABEL=$(printf '%s\n' "$BADGING" | sed -n "s/^application-label:'\(.*\)'/\1/p")
+          AUTH=$(printf '%s\n' "$XML" | grep 'android:authorities' | sed -E 's/.*="([^"]*)".*/\1/' | sort -u | tr '\n' ' ')
+          {
+            echo "### ZINOU TOP APK check"
+            echo "| Item | Value |"
+            echo "|---|---|"
+            echo "| APK | \`$(basename "$APK")\` ($(du -h "$APK" | cut -f1)) |"
+            echo "| Package | \`$PKG\` |"
+            echo "| Version | \`$VER\` |"
+            echo "| Label | $LABEL |"
+            echo "| Provider authorities | \`$AUTH\` |"
+            echo "| APKs built | $(find smarttubetv/build/outputs/apk/zinou/debug -name '*.apk' -printf '%f ') |"
+          } >> "$GITHUB_STEP_SUMMARY"
+          [ "$PKG" = "com.zinou.top" ] || { echo "::error::package is '$PKG', expected com.zinou.top"; exit 1; }
+          [ "$LABEL" = "ZINOU TOP" ] || { echo "::error::app label is '$LABEL', expected ZINOU TOP"; exit 1; }
+          if printf '%s' "$AUTH" | grep -qi 'smarttube'; then echo "::error::SmartTube provider authority in ZINOU APK: $AUTH"; exit 1; fi
+          echo "APK identity OK: $PKG $VER '$LABEL' [$AUTH]"
+
       - name: Upload debug APKs
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
