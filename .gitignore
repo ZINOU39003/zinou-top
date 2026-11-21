@@ -71,3 +71,19 @@ tmp/
 fabric.properties
 *BAK.java
 hs_err_pid*.log
+
+# ZINOU TOP: signing secrets must NEVER be committed (see SIGNING.md)
+keystore.properties
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.jks.base64
+*.keystore.base64
+!keystore.properties.example
+
+# ZINOU TOP tooling
+__pycache__/
+*.pyc
+/dist/

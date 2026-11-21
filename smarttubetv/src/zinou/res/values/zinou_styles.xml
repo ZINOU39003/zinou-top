@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Used only by SplashActivity (see src/zinou/AndroidManifest.xml).
+         Same parent as the app theme; only the window background differs.
+         MotherActivity still applies the user's colour scheme in onCreate(). -->
+    <style name="Theme.Zinou.Splash" parent="App.Theme.Leanback.Browse">
+        <item name="android:windowBackground">@drawable/zinou_splash_background</item>
+    </style>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ZINOU TOP brand colours. Change here to re-colour splash and adaptive icon background. -->
+<resources>
+    <color name="zinou_brand_navy">#0B1426</color>
+    <color name="zinou_brand_amber">#FFB400</color>
+    <color name="zinou_icon_background">#0F1D36</color>
+</resources>

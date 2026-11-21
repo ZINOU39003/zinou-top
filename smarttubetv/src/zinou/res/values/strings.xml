@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ZINOU TOP branding (flavor overlay). Overrides smarttubetv/src/main/res/values/strings.xml -->
+<resources>
+    <string translatable="false" name="app_name"><![CDATA[ZINOU TOP]]></string>
+    <string translatable="false" name="browse_title"><![CDATA[ZINOU TOP]]></string>
+</resources>

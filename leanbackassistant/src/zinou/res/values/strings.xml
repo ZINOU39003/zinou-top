@@ -1,0 +1,6 @@
+<resources>
+    <!-- ZINOU TOP branding (flavor overlay). Search authority MUST equal the zinou applicationId. -->
+    <string name="search_label">ZINOU TOP</string>
+    <string name="settings_description">ZINOU TOP Videos</string>
+    <string translatable="false" name="search_authority">com.zinou.top</string>
+</resources>

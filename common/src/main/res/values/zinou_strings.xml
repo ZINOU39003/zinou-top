@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ZINOU TOP About screen. Only shown when R.bool.zinou_branding is true. -->
+<resources>
+    <string name="zinou_about_info">Information</string>
+    <string name="zinou_about_description">Video app for Android TV and car screens.</string>
+    <string name="zinou_about_version">Version %1$s (%2$d)</string>
+    <string name="zinou_about_powered_by">Powered by open-source technology.</string>
+    <string name="zinou_about_upstream">Based on upstream SmartTube commit: %1$s</string>
+    <string name="zinou_open_source_licenses">Open Source Licenses</string>
+
+    <!-- ZINOU TOP update system -->
+    <string name="zinou_github">GitHub</string>
+    <string name="zinou_update_checking">Checking for updates…</string>
+    <string name="zinou_update_unavailable">Unable to check for updates right now.</string>
+    <string name="zinou_update_not_configured">The update source is not configured in this build.</string>
+    <string name="zinou_update_no_release">No published ZINOU TOP release was found.</string>
+    <string name="zinou_update_invalid">The update information is invalid. The update was cancelled.</string>
+    <string name="zinou_update_download_failed">The update could not be downloaded. Please try again later.</string>
+    <string name="zinou_update_verifying">Verifying the update…</string>
+    <string name="zinou_update_verify_failed">Update verification failed (SHA-256). The downloaded file was deleted and nothing was installed.</string>
+    <string name="zinou_update_not_newer">The downloaded version is not newer than the installed one. Nothing was installed.</string>
+
+    <!-- Legal attribution. Not translatable: license texts must stay verbatim. -->
+    <string-array name="zinou_license_notices" translatable="false">
+        <item>SmartTube, MediaServiceCore, SharedModules: MIT License. Copyright (c) 2020-present yuliskov</item>
+        <item>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</item>
+        <item>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</item>
+        <item>THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</item>
+        <item>DoubleTapPlayerView: MIT License. Copyright (c) 2019 Viktor Krez</item>
+        <item>ExoPlayer (Amazon port 2.10.6): Apache License 2.0</item>
+        <item>AndroidX Leanback, Fragment: Apache License 2.0</item>
+        <item>ChatKit, FilePicker, Slidr, Apache Commons IO: Apache License 2.0</item>
+        <item>J2V8: Eclipse Public License 1.0</item>
+        <item>Full license texts: LICENSE files in the project source repository.</item>
+    </string-array>
+</resources>

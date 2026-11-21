@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 12+: the system splash shows the (adaptive) app icon on this background. -->
+    <style name="Theme.Zinou.Splash" parent="App.Theme.Leanback.Browse">
+        <item name="android:windowBackground">@drawable/zinou_splash_background</item>
+        <item name="android:windowSplashScreenBackground">@color/zinou_brand_navy</item>
+    </style>
+</resources>

@@ -30,6 +30,9 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+// ZINOU TOP: release signing guard (no secrets inside). See SIGNING.md
+apply from: 'zinou-signing.gradle'
+
 // The first letter of the flavor name must be in uppercase
 if (new File("${projectDir}/google-services.json").exists() && (getGradle().getStartParameter().getTaskRequests().toString().contains("Stbeta") ||
         getGradle().getStartParameter().getTaskRequests().toString().contains("Ststable"))) {
@@ -119,6 +122,12 @@ android {
         }
     }
 
+    // ZINOU TOP: zinou debug builds always use the standard Android debug key.
+    // The private release key is used only for zinou release builds (see zinou-signing.gradle).
+    if (project.findProperty('zinouBuildRequested')) {
+        buildTypes.debug.signingConfig = signingConfigs.debug
+    }
+
     // naming example: SmartYouTubeTV_Xwalk_v6.8.12_r.apk
     // https://stackoverflow.com/questions/18332474/how-to-set-versionname-in-apk-filename-using-gradle
     applicationVariants.all { variant ->
@@ -131,6 +140,13 @@ android {
             arch = arch != null ? arch : "universal"
 
             def newApkName = sprintf("%s_%s_%s_%s.apk", [project, flavor, version, arch])
+
+            // ZINOU TOP naming: ZinouTop-v1.0.0.apk (universal), ZinouTop-v1.0.0-arm64-v8a.apk (per ABI)
+            if (variant.productFlavors[-1].name == "zinou") {
+                def suffix = arch == "universal" ? "" : "-" + arch
+                def debugSuffix = variant.buildType.name == "debug" ? "-debug" : ""
+                newApkName = sprintf("ZinouTop-v%s%s%s.apk", [version, suffix, debugSuffix])
+            }
 
             // gradle 4.6 migration
             output.outputFileName = new File(newApkName)
@@ -176,6 +192,16 @@ android {
             ndk {
                 abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86'
             }
+        }
+        // ZINOU TOP: independent package ID. Branding lives in src/zinou/ of each module.
+        // Version scheme: versionCode = MAJOR * 10000 + MINOR * 100 + PATCH (1.0.0 -> 10000)
+        zinou {
+            applicationId "com.zinou.top"
+            versionCode 10000
+            versionName "1.0.0"
+            targetSdkVersion project.properties.compileSdkVersion
+            // Submodules (youtubeapi, appupdatechecker2) don't define 'zinou'; use their 'ststable' variant
+            matchingFallbacks = ['ststable']
         }
     }
 }

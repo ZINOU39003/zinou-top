@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ZINOU TOP: empty the upstream author's donation / feedback lists (defense in depth).
+     They are only used by the upstream About screen, which the zinou flavor does not open. -->
+<resources>
+    <string-array name="donations" />
+    <string-array name="feedback" />
+</resources>

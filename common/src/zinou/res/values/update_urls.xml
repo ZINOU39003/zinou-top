@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ZINOU TOP update manifest. The URL is generated from zinou.properties by common/zinou-config.gradle.
+     It is empty while github.owner is not configured (the update check then reports "not configured"). -->
+<resources>
+    <string-array name="update_urls">
+        <item>@string/zinou_update_manifest_url</item>
+    </string-array>
+</resources>

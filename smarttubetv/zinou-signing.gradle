@@ -1,0 +1,59 @@
+// ZINOU TOP - release signing guard.
+//
+// Applied from smarttubetv/build.gradle. This file contains NO secrets.
+// The real values live in <repo>/keystore.properties, which is git-ignored.
+// Template: <repo>/keystore.properties.example. Full guide: <repo>/SIGNING.md
+//
+// What it does:
+//  1. If keystore.properties exists but is incomplete -> clear error (instead of "path may not be null").
+//  2. Building a zinou *release* without a usable keystore -> clear error (never an unsigned release APK).
+//  3. Exposes project.ext.zinouBuildRequested, used by build.gradle so zinou *debug* builds
+//     use the standard Android debug key, not the private release key.
+// Debug builds never need keystore.properties.
+
+def zinouKeystorePropsFile = rootProject.file("keystore.properties")
+def zinouRequiredKeys = ["storeFile", "storePassword", "keyAlias", "keyPassword"]
+def zinouHelp = """
+  How to fix:
+    1. Create your private keystore OUTSIDE the repository (see SIGNING.md).
+    2. Copy keystore.properties.example to keystore.properties (repository root).
+    3. Fill storeFile (absolute path, forward slashes), storePassword, keyAlias, keyPassword.
+  Debug builds (assembleZinouDebug) do not need any keystore.
+"""
+
+project.ext.zinouBuildRequested = gradle.startParameter.taskNames.any { it.toLowerCase().contains("zinou") }
+
+def zinouLoadProps = {
+    def props = new Properties()
+    zinouKeystorePropsFile.withInputStream { props.load(it) }
+    return props
+}
+
+// 1. Incomplete keystore.properties: fail early with a readable message.
+if (zinouKeystorePropsFile.exists()) {
+    def props = zinouLoadProps()
+    def missing = zinouRequiredKeys.findAll { !props.getProperty(it)?.trim() }
+    if (!missing.isEmpty()) {
+        throw new GradleException("ZINOU TOP signing: keystore.properties is incomplete. Missing value(s): " +
+                missing.join(", ") + "\n" + zinouHelp)
+    }
+}
+
+// 2. A zinou release must be signed with the ZINOU TOP private key.
+gradle.taskGraph.whenReady { graph ->
+    def releaseTasks = graph.allTasks.findAll {
+        it.project == project && it.name ==~ /^(assemble|package|bundle|install|sign|validateSigning)ZinouRelease.*/
+    }
+    if (releaseTasks.isEmpty()) {
+        return
+    }
+    if (!zinouKeystorePropsFile.exists()) {
+        throw new GradleException("ZINOU TOP release build requires a signing key, but " +
+                zinouKeystorePropsFile.absolutePath + " was not found.\n" + zinouHelp)
+    }
+    def storeFile = project.file(zinouLoadProps().getProperty("storeFile").trim())
+    if (!storeFile.isFile()) {
+        throw new GradleException("ZINOU TOP release build: keystore file not found: " +
+                storeFile.absolutePath + "\n  Check 'storeFile' in keystore.properties.\n" + zinouHelp)
+    }
+}

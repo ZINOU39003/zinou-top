@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ZINOU TOP flavor switch. Project settings (GitHub, upstream commit) live in <repo>/zinou.properties. -->
+<resources>
+    <bool name="zinou_branding">true</bool>
+</resources>
