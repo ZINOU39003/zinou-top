@@ -1,0 +1,67 @@
+// ZINOU TOP - build-time configuration (applied from common/build.gradle). Contains NO secrets.
+//
+// Single source of truth: <repo>/zinou.properties
+// Produces, for Java code in this module (com.liskovsoft.smartyoutubetv2.common.BuildConfig):
+//   ZINOU_GITHUB_OWNER, ZINOU_GITHUB_REPOSITORY, ZINOU_GITHUB_URL,
+//   ZINOU_UPDATE_MANIFEST_URL, ZINOU_RELEASE_API_URL, ZINOU_UPSTREAM_COMMIT
+// Upstream flavors (stbeta / ststable / stfdroid) get empty values from defaultConfig.
+// The 'zinou' flavor also gets the generated string resource 'zinou_update_manifest_url',
+// referenced by common/src/zinou/res/values/update_urls.xml.
+// While github.owner is YOUR_USERNAME (or empty) every URL is empty: the app ships no fake URL.
+
+def zinouPropsFile = rootProject.file("zinou.properties")
+def zinouProps = new Properties()
+if (zinouPropsFile.exists()) {
+    zinouPropsFile.withInputStream { zinouProps.load(it) }
+}
+
+def zinouOwner = (zinouProps.getProperty("github.owner") ?: "").trim()
+def zinouRepository = (zinouProps.getProperty("github.repository") ?: "").trim()
+def zinouUpstreamCommit = (zinouProps.getProperty("upstream.commit") ?: "").trim()
+
+// Strict validation: values end up inside Java string literals and URLs.
+def zinouNamePattern = ~/^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9_])?$/
+if (zinouOwner && !(zinouOwner ==~ zinouNamePattern)) {
+    throw new GradleException("zinou.properties: invalid github.owner '" + zinouOwner + "'")
+}
+if (zinouRepository && !(zinouRepository ==~ zinouNamePattern)) {
+    throw new GradleException("zinou.properties: invalid github.repository '" + zinouRepository + "'")
+}
+if (zinouUpstreamCommit && !(zinouUpstreamCommit ==~ /^[0-9a-f]{7,40}$/)) {
+    throw new GradleException("zinou.properties: invalid upstream.commit '" + zinouUpstreamCommit + "' (expected a git hash)")
+}
+
+def zinouConfigured = zinouOwner && zinouRepository && zinouOwner != "YOUR_USERNAME"
+def zinouGithubUrl = zinouConfigured ? "https://github.com/" + zinouOwner + "/" + zinouRepository : ""
+def zinouManifestUrl = zinouConfigured ? zinouGithubUrl + "/releases/latest/download/update.json" : ""
+def zinouApiUrl = zinouConfigured ? "https://api.github.com/repos/" + zinouOwner + "/" + zinouRepository + "/releases/latest" : ""
+
+def zinouQuote = { String value -> "\"" + value + "\"" }
+
+android.defaultConfig {
+    buildConfigField "String", "ZINOU_GITHUB_OWNER", zinouQuote("")
+    buildConfigField "String", "ZINOU_GITHUB_REPOSITORY", zinouQuote("")
+    buildConfigField "String", "ZINOU_GITHUB_URL", zinouQuote("")
+    buildConfigField "String", "ZINOU_UPDATE_MANIFEST_URL", zinouQuote("")
+    buildConfigField "String", "ZINOU_RELEASE_API_URL", zinouQuote("")
+    buildConfigField "String", "ZINOU_UPSTREAM_COMMIT", zinouQuote("")
+}
+
+android.productFlavors.getByName("zinou") {
+    buildConfigField "String", "ZINOU_GITHUB_OWNER", zinouQuote(zinouConfigured ? zinouOwner : "")
+    buildConfigField "String", "ZINOU_GITHUB_REPOSITORY", zinouQuote(zinouRepository)
+    buildConfigField "String", "ZINOU_GITHUB_URL", zinouQuote(zinouGithubUrl)
+    buildConfigField "String", "ZINOU_UPDATE_MANIFEST_URL", zinouQuote(zinouManifestUrl)
+    buildConfigField "String", "ZINOU_RELEASE_API_URL", zinouQuote(zinouApiUrl)
+    buildConfigField "String", "ZINOU_UPSTREAM_COMMIT", zinouQuote(zinouUpstreamCommit)
+    resValue "string", "zinou_update_manifest_url", zinouManifestUrl
+}
+
+if (!zinouConfigured) {
+    logger.lifecycle("ZINOU TOP: github.owner is not set in zinou.properties -> update checks are disabled in this build.")
+}
+
+// Unit tests for the ZINOU update logic run on the JVM, where android.jar's org.json is only a stub.
+dependencies {
+    testImplementation 'org.json:json:20231013'
+}

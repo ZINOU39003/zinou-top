@@ -6,4 +6,15 @@
     <string name="zinou_about_powered_by">مبني على تقنيات مفتوحة المصدر.</string>
     <string name="zinou_about_upstream">مبني على إصدار SmartTube الأصلي: %1$s</string>
     <string name="zinou_open_source_licenses">تراخيص المصادر المفتوحة</string>
+
+    <string name="zinou_github">GitHub</string>
+    <string name="zinou_update_checking">جارٍ التحقق من التحديثات…</string>
+    <string name="zinou_update_unavailable">لا يمكن التحقق من وجود تحديث حاليًا.</string>
+    <string name="zinou_update_not_configured">مصدر التحديثات غير مُعدّ في هذه النسخة.</string>
+    <string name="zinou_update_no_release">لم يتم العثور على إصدار منشور لـ ZINOU TOP.</string>
+    <string name="zinou_update_invalid">معلومات التحديث غير صالحة. تم إلغاء التحديث.</string>
+    <string name="zinou_update_download_failed">تعذّر تنزيل التحديث. حاول مرة أخرى لاحقًا.</string>
+    <string name="zinou_update_verifying">جارٍ التحقق من سلامة التحديث…</string>
+    <string name="zinou_update_verify_failed">فشل التحقق من التحديث (SHA-256). تم حذف الملف ولم يُثبَّت شيء.</string>
+    <string name="zinou_update_not_newer">الإصدار المُنزَّل ليس أحدث من الإصدار المثبّت. لم يُثبَّت شيء.</string>
 </resources>

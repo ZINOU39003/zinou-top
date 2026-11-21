@@ -108,3 +108,6 @@ dependencies {
 
     implementation project(':slidableactivity') // https://github.com/r0adkll/Slidr
 }
+
+// ZINOU TOP: build-time configuration from zinou.properties (no secrets)
+apply from: 'zinou-config.gradle'

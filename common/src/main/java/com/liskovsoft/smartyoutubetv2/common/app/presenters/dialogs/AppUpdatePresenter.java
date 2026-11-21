@@ -15,6 +15,7 @@ import com.liskovsoft.smartyoutubetv2.common.app.presenters.base.BasePresenter;
 import com.liskovsoft.smartyoutubetv2.common.prefs.GeneralData;
 import com.liskovsoft.smartyoutubetv2.common.utils.LoadingManager;
 import com.liskovsoft.smartyoutubetv2.common.utils.Utils;
+import com.liskovsoft.smartyoutubetv2.common.zinou.update.ZinouUpdateManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ public class AppUpdatePresenter extends BasePresenter<Void> implements AppUpdate
     private final AppDialogPresenter mSettingsPresenter;
     private final String[] mUpdateManifestUrls;
     private boolean mIsForceCheck;
+    private boolean mZinouPreflightPassed; // ZINOU TOP
 
     public AppUpdatePresenter(Context context) {
         super(context);
@@ -49,6 +51,16 @@ public class AppUpdatePresenter extends BasePresenter<Void> implements AppUpdate
     }
 
     public void start(boolean forceCheck) {
+        // ZINOU TOP: validate update.json (HTTPS, format, SHA-256 data) before the engine runs
+        if (!mZinouPreflightPassed && ZinouUpdateManager.isEnabled(getContext())) {
+            ZinouUpdateManager.preflight(getContext(), forceCheck, () -> {
+                mZinouPreflightPassed = true;
+                start(forceCheck);
+                mZinouPreflightPassed = false;
+            });
+            return;
+        }
+
         mIsForceCheck = forceCheck;
 
         if (forceCheck) {
@@ -73,6 +85,12 @@ public class AppUpdatePresenter extends BasePresenter<Void> implements AppUpdate
 
     @Override
     public void onUpdateError(Exception error) {
+        // ZINOU TOP: friendly messages for download/check failures
+        if (ZinouUpdateManager.isEnabled(getContext()) && ZinouUpdateManager.handleEngineError(getContext(), error, mIsForceCheck)) {
+            onFinish();
+            return;
+        }
+
         if (mIsForceCheck) {
             LoadingManager.showLoading(getContext(), false);
 
@@ -96,7 +114,7 @@ public class AppUpdatePresenter extends BasePresenter<Void> implements AppUpdate
         mSettingsPresenter.appendSingleButton(
                 UiOptionItem.from(getContext().getString(R.string.install_update), optionItem -> {
                     GeneralData.instance(getContext()).setChangelog(changelog);
-                    mUpdateChecker.installUpdate();
+                    installUpdate(apkPath);
                 }, false));
         mSettingsPresenter.appendStringsCategory(getContext().getString(R.string.update_changelog), createChangelogOptions(changelog));
         //mSettingsPresenter.appendSingleSwitch(UiOptionItem.from(getContext().getString(R.string.show_again), optionItem -> {
@@ -117,7 +135,7 @@ public class AppUpdatePresenter extends BasePresenter<Void> implements AppUpdate
             @Override
             public void onAction() {
                 GeneralData.instance(getContext()).setChangelog(changelog);
-                mUpdateChecker.installUpdate();
+                installUpdate(apkPath);
             }
 
             @Override
@@ -132,6 +150,16 @@ public class AppUpdatePresenter extends BasePresenter<Void> implements AppUpdate
                 return getContext().getString(R.string.install_update);
             }
         });
+    }
+
+    private void installUpdate(String apkPath) {
+        // ZINOU TOP: verify SHA-256, package and version before opening the Android Package Installer
+        if (ZinouUpdateManager.isEnabled(getContext())) {
+            ZinouUpdateManager.verifyAndInstall(getContext(), apkPath, mUpdateChecker::installUpdate);
+            return;
+        }
+
+        mUpdateChecker.installUpdate();
     }
 
     private List<OptionItem> createChangelogOptions(List<String> changelog) {

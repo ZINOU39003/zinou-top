@@ -8,6 +8,18 @@
     <string name="zinou_about_upstream">Based on upstream SmartTube commit: %1$s</string>
     <string name="zinou_open_source_licenses">Open Source Licenses</string>
 
+    <!-- ZINOU TOP update system -->
+    <string name="zinou_github">GitHub</string>
+    <string name="zinou_update_checking">Checking for updates…</string>
+    <string name="zinou_update_unavailable">Unable to check for updates right now.</string>
+    <string name="zinou_update_not_configured">The update source is not configured in this build.</string>
+    <string name="zinou_update_no_release">No published ZINOU TOP release was found.</string>
+    <string name="zinou_update_invalid">The update information is invalid. The update was cancelled.</string>
+    <string name="zinou_update_download_failed">The update could not be downloaded. Please try again later.</string>
+    <string name="zinou_update_verifying">Verifying the update…</string>
+    <string name="zinou_update_verify_failed">Update verification failed (SHA-256). The downloaded file was deleted and nothing was installed.</string>
+    <string name="zinou_update_not_newer">The downloaded version is not newer than the installed one. Nothing was installed.</string>
+
     <!-- Legal attribution. Not translatable: license texts must stay verbatim. -->
     <string-array name="zinou_license_notices" translatable="false">
         <item>SmartTube, MediaServiceCore, SharedModules: MIT License. Copyright (c) 2020-present yuliskov</item>
