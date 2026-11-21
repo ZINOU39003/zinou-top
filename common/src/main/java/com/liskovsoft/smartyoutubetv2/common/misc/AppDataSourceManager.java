@@ -6,6 +6,7 @@ import com.liskovsoft.smartyoutubetv2.common.R;
 import com.liskovsoft.smartyoutubetv2.common.app.models.data.SettingsItem;
 import com.liskovsoft.smartyoutubetv2.common.app.presenters.settings.AboutSettingsPresenter;
 import com.liskovsoft.smartyoutubetv2.common.app.presenters.settings.AboutSimpleSettingsPresenter;
+import com.liskovsoft.smartyoutubetv2.common.app.presenters.settings.ZinouAboutSettingsPresenter;
 import com.liskovsoft.smartyoutubetv2.common.app.presenters.settings.AccountSettingsPresenter;
 import com.liskovsoft.smartyoutubetv2.common.app.presenters.settings.AutoFrameRateSettingsPresenter;
 import com.liskovsoft.smartyoutubetv2.common.app.presenters.settings.BackupSettingsPresenter;
@@ -68,7 +69,10 @@ public class AppDataSourceManager {
         settingItems.add(new SettingsItem(
                 context.getString(R.string.app_backup_restore), () -> BackupSettingsPresenter.instance(context).show(), R.drawable.settings_backup));
 
-        if (Helpers.equalsAny(context.getPackageName(), Utils.KNOWN_PACKAGES)) {
+        if (ZinouAboutSettingsPresenter.isEnabled(context)) { // ZINOU TOP: own About screen (zinou flavor only)
+            settingItems.add(new SettingsItem(
+                    context.getString(R.string.settings_about), () -> ZinouAboutSettingsPresenter.instance(context).show(), R.drawable.settings_about));
+        } else if (Helpers.equalsAny(context.getPackageName(), Utils.KNOWN_PACKAGES)) {
             settingItems.add(new SettingsItem(
                     context.getString(R.string.settings_about), () -> AboutSettingsPresenter.instance(context).show(), R.drawable.settings_about));
         } else {

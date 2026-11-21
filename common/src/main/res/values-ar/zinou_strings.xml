@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="zinou_about_info">معلومات</string>
+    <string name="zinou_about_description">تطبيق فيديو لشاشات Android TV والسيارات.</string>
+    <string name="zinou_about_version">الإصدار %1$s (%2$d)</string>
+    <string name="zinou_about_powered_by">مبني على تقنيات مفتوحة المصدر.</string>
+    <string name="zinou_about_upstream">مبني على إصدار SmartTube الأصلي: %1$s</string>
+    <string name="zinou_open_source_licenses">تراخيص المصادر المفتوحة</string>
+</resources>

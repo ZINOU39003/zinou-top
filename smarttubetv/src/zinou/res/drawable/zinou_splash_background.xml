@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Starting-window splash: drawn by the system before any app code runs, so it adds no delay. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/zinou_brand_navy" />
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/zinou_splash_logo" />
+    </item>
+</layer-list>

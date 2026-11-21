@@ -48,6 +48,10 @@ android {
         stbeta {}
         ststable {}
         stfdroid {}
+        // ZINOU TOP flavor. Submodules (youtubeapi, appupdatechecker2) have no 'zinou' flavor, so fall back to 'ststable'.
+        zinou {
+            matchingFallbacks = ['ststable']
+        }
     }
 }
 

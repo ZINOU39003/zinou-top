@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ZINOU TOP defaults for upstream flavors (stbeta / ststable / stfdroid): branding OFF.
+     The 'zinou' flavor overrides these values in common/src/zinou/res/values/zinou_config.xml -->
+<resources>
+    <bool name="zinou_branding">false</bool>
+    <string name="zinou_upstream_commit" translatable="false" />
+</resources>

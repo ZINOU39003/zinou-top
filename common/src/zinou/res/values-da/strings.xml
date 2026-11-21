@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ZINOU TOP: overrides only the translated strings that name the app. Source: common/src/main/res/values-da/strings.xml -->
+<resources>
+    <string name="app_exit_shortcut">Afslut ZINOU TOP</string>
+    <string name="msg_restart_app">Genstart venligst ZINOU TOP for at anvende indstillingerne</string>
+    <string name="msg_player_error_source2">URL virker ikke, ellers er enhedens ur forkert.\nDette er normalt en fejl i ZINOU TOP.</string>
+    <string name="finish_on_disconnect">Luk ZINOU TOP efter at have afbrudt telefonen/tabletten</string>
+    <string name="enable_voice_search_desc">Den officielle app erstattes med en såkaldt \"bro\", som videresender globale søgeforespørgsler til ZINOU TOP.</string>
+    <string name="select_channel_section">Åbn tilsvarende sektion, når ZINOU TOP startes fra en sektion i Android TV-launcheren. </string>
+    <string name="msg_player_error_video_source">Video-URL virker ikke, ellers er enhedens ur forkert.\nDette er normalt en fejl i ZINOU TOP.</string>
+    <string name="msg_player_error_audio_source">Lyd-URL virker ikke, ellers er enhedens ur forkert.\nDette er normalt en fejl i ZINOU TOP.</string>
+    <string name="msg_player_error_subtitle_source">Undertekst-URL virker ikke, ellers er enhedens ur forkert.\nDette er normalt en fejl i ZINOU TOP.</string>
+    <string name="tunneled_video_playback_desc">Afspil videoer direkte til displayet uden, at ZINOU TOP behandler den. Det giver bedre lyd- og billedsynkronisering samt jævnere afspilning. Bemærk: Pause fungerer muligvis ikke korrekt!</string>
+    <string name="alt_presets_behavior_desc">ZINOU TOP vil forsøge at opretholde båndbredden svarende til den valgte forudindstilling i stedet for at matche mellem opløsning, FPS og codec.</string>
+    <string name="disable_mic_permission">Deaktiver venligst mikrofonadgang for ZINOU TOP for, at denne genkender kan fungere korrekt.</string>
+    <string name="lost_setting_warning">ZINOU TOP-indstillingerne bliver ændret. Sørg for, at du har sikkerhedskopieret indstillingerne.</string>
+    <string name="player_only_mode">Vis kun afspilleren, hvis videoen åbnes uden for ZINOU TOP</string>
+    <string name="prefer_ipv4_desc">Kan løse problemer, når ZINOU TOP slet ikke virker.\nBemærk: Kan forårsage frysninger og nedbrud (især på Android 8-enheder eller Dune HD).</string>
+</resources>

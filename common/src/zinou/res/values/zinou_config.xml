@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ZINOU TOP build metadata. Update zinou_upstream_commit after every merge from upstream SmartTube. -->
+<resources>
+    <bool name="zinou_branding">true</bool>
+    <!-- yuliskov/SmartTube master, 2026-11-19 -->
+    <string name="zinou_upstream_commit" translatable="false">41fbc7c</string>
+</resources>

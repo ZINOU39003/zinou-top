@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ZINOU TOP flavor manifest overlay. Merged on top of src/main/AndroidManifest.xml. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
+
+    <application>
+        <!-- Branded starting window (no artificial delay). Only the theme attribute is added. -->
+        <activity
+            android:name="com.liskovsoft.smartyoutubetv2.tv.ui.main.SplashActivity"
+            android:theme="@style/Theme.Zinou.Splash"
+            tools:node="merge" />
+    </application>
+
+</manifest>
